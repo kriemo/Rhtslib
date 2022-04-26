@@ -2403,7 +2403,7 @@ static void overlap_push(bam_plp_t iter, lbnode_t *node)
     if ( (node->b.core.mtid >= 0 && node->b.core.tid != node->b.core.mtid)
          || (labs(node->b.core.isize) >= 2*node->b.core.l_qseq
          && node->b.core.mpos >= node->end) // for those wild cigars
-       ) return 0;
+       ) return ;
 
     khiter_t kitr = kh_get(olap_hash, iter->overlaps, bam_get_qname(&node->b));
     if ( kitr==kh_end(iter->overlaps) )
