@@ -2408,9 +2408,14 @@ static void overlap_push(bam_plp_t iter, lbnode_t *node)
     khiter_t kitr = kh_get(olap_hash, iter->overlaps, bam_get_qname(&node->b));
     if ( kitr==kh_end(iter->overlaps) )
     {
-        int ret;
-        kitr = kh_put(olap_hash, iter->overlaps, bam_get_qname(&node->b), &ret);
-        kh_value(iter->overlaps, kitr) = node;
+        // Only add reads where the mate is still to arrive
+        if (node->b.core.mpos >= node->b.core.pos ||
+          ((node->b.core.flag & BAM_FPAIRED) && node->b.core.mpos == -1)) {
+          int ret;
+          kitr = kh_put(olap_hash, iter->overlaps, bam_get_qname(&node->b), &ret);
+          if (ret < 0) return ;
+          kh_value(iter->overlaps, kitr) = node;
+        }
     }
     else
     {
